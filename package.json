@@ -16,6 +16,7 @@
     "optimist": "^0.6.1",
     "querystring": "^0.2.0",
     "request": "^2.81.0",
-    "request-promise": "^4.2.0"
+    "request-promise": "^4.2.0",
+    "tough-cookie-filestore": "^0.0.1"
   }
 }
