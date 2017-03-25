@@ -29,7 +29,7 @@ const http_post = (url,data)=>{
         const {location,now} = results[0];
         const {name} = location;
         const {text,temperature} = now;
-        return `中国 ${name}，今天的天气是${text} 当前温度是${temperature}℃`;
+        return `中国 ${name}，今天的天气是${text} 当前温度是${temperature}℃ http://t.cn/R6f6HVt`;
     });
 
     const tasks = tokens.map((data,index)=>{
