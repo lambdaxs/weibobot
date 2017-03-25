@@ -2,7 +2,7 @@ let request = require('request');
 const {mine} = require('../config.json');
 const xb = require('./xiaobing');
 const fs = require('fs');
-const reply_ids = require('./relpy_ids.json');
+const reply_ids = require('./reply_ids.json');
 
 //获取我收到的评论列表
 const get_comments = (token)=>{
@@ -20,9 +20,8 @@ const get_comments = (token)=>{
 //回复评论
 const reply_comment = (data)=>{
     return new Promise((s,f)=>{
-        request.post('https://api.weibo.com/2/comments/reply.json',{formData:data},(err,res,body)=>{
+        request.post('https://api.weibo.com/2/comments/reply.json',{form:data},(err,res,body)=>{
             if (!err && res.statusCode == 200){            
-                console.log(res);
                 s(JSON.parse(body));
             }else {
                 f({
@@ -40,7 +39,7 @@ const reply_comment = (data)=>{
         const datas = await get_comments(token);
         //评论id
         const comment_id = datas.comments[0].id;
-        if (reply_ids.indexof(comment_id) !== -1){//已存在
+        if (reply_ids.indexOf(comment_id) !== -1){//已存在
             console.log(new Date().toLocaleString());
             console.log('没有新的评论');
             return;
@@ -54,9 +53,9 @@ const reply_comment = (data)=>{
         //发布回复
         await reply_comment({
             access_token:mine.my_token,
-            comment:'我就是小冰！',
-            cid:4089110388351973,
-            id:4088779897497452
+            comment:reply,
+            cid:comment_id,
+            id:status_id
         })
         //将评论id 存入已回复列表
         reply_ids.push(comment_id);
