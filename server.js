@@ -18,7 +18,7 @@ const http_post = (url,data)=>{
 };
 
 http.createServer(async (req,res)=>{
-    res.wirteHead(200,{'Content-Type':'text/html;charset=utf-8'});
+    res.writeHead(200,{'Content-Type':'text/html;charset=utf-8'});
 
     if (req.url.startsWith('/oauth/weibo')){
         const {url} = req;
