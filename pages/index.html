@@ -29,6 +29,7 @@
         <div class="append w50" style="margin:0 auto;">
             <input type="text" name="search" placeholder="输入城市" id="city">
             <button class="button outline" onclick="return go();">授权</button>
+            <button class="button outline" id="remove-btn">取消授权</button>
         </div>
     </div>
 </form>
@@ -43,6 +44,25 @@
         var city_name = document.getElementById('city').value;
 	window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=529280005&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state='+encodeURI(encodeURI(city_name));    
 	return false;
+    }
+
+    //读取cookie
+    function getCookie(name){
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+        if(arr=document.cookie.match(reg)){
+            return unescape(arr[2]);
+        }else {
+            return null;
+        }        
+    }
+
+    var uid = getCookie('uid');
+    if (uid){//uid存在 可以直接取消授权
+        $('#remove-btn').show();
+        console.log(uid);
+    }else {//先登录 再取消授权
+        $('#remove-btn').hide();
+        console.log('需要登录');
     }
 
 </script>
