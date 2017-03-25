@@ -50,7 +50,11 @@ http.createServer(async (req,res)=>{
                 return data.uid != uid;
             });
             fs.writeFileSync(const_data.token_path,JSON.stringify(rs));
-            return res.end(`<h2>取消授权成功</h2>`);
+            const data = fs.readFileSync('./pages/remove.html');
+            res.writeHead(200,{
+                'Content-Type':'text/html;charset=utf-8;'
+            });
+            return res.end(data.toString());
         }
 
         //过滤城市信息
@@ -69,12 +73,21 @@ http.createServer(async (req,res)=>{
         }else {
             fs.writeFileSync(const_data.token_path,JSON.stringify([{uid,access_token,city:state}]));
         }
-        return res.end(`<h2>机器人添加成功~</h2>`);
+        const data = fs.readFileSync('./pages/success.html');
+        res.writeHead(200,{
+            'Content-Type':'text/html;charset=utf-8;'
+        });
+        return res.end(data.toString());
     }else if(req.url.startsWith('/unoauth/weibo/')){
-        return res.end(`<h2>取消授权成功</h2>`);
+        const data = fs.readFileSync('./pages/remove.html');
+        res.writeHead(200,{
+            'Content-Type':'text/html;charset=utf-8;'
+        });
+        return res.end(data.toString());
     }else {
         console.log('todo');
-        return res.end(`<h2>hello world</h2>`);
+        res.writeHead(404);
+        return res.end(`not funod`);
     }
 }).listen(3000);
 
