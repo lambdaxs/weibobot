@@ -23,6 +23,7 @@ http.createServer(async (req,res)=>{
     if (req.url.startsWith('/oauth/weibo')){
         const {url} = req;
         const {code,state} = query_url.parse(url,true).query;
+
         if(!code){
             console.log('回调地址中没有code')
             return res.end(`<h2>授权失败！</h2>`);
@@ -36,14 +37,23 @@ http.createServer(async (req,res)=>{
             code,
         };
 
-        //过滤城市信息
-
 
         //微博授权
         const {uid,access_token} = await http_post(const_data.get_token,post_data);
         if (!uid || !access_token){
             return res.end(`<h2>授权失败！</h2>`);
         }
+
+        if (!state){//取消授权
+            const tokens = require('./token.json');
+            const rs = tokens.filter(data=>{
+                return data.uid != uid;
+            });
+            fs.writeFileSync(const_data.token_path,JSON.stringify(rs));
+            return res.end(`<h2>取消授权成功</h2>`);
+        }
+
+        //过滤城市信息
 
         if (fs.existsSync(const_data.token_path)){
             const token_datas = require('./token.json');
@@ -59,31 +69,8 @@ http.createServer(async (req,res)=>{
         }else {
             fs.writeFileSync(const_data.token_path,JSON.stringify([{uid,access_token,city:state}]));
         }
-        res.writeHead(200,{
-            'Set-Cookie':`uid=${uid}`
-        });
         return res.end(`<h2>机器人添加成功~</h2>`);
     }else if(req.url.startsWith('/unoauth/weibo/')){
-        const {url} = req;
-        const {code,state} = query_url.parse(url,true).query;
-        if(!code){
-            console.log('回调地址中没有code')
-            return res.end(`<h2>授权失败！</h2>`);
-        }
-        const post_data = {
-            client_id:const_data.client_id,
-            client_secret:const_data.client_secret,
-            grant_type:'authorization_code',
-            redirect_uri:const_data.redirect_uri,
-            code,
-        };
-        //微博授权
-        const {uid,access_token} = await http_post(const_data.get_token,post_data);
-        const tokens = require('./token.json');
-        const rs = tokens.filter(data=>{
-            return data.uid != uid;
-        });
-        fs.writeFileSync(const_data.token_path,JSON.stringify(rs));
         return res.end(`<h2>取消授权成功</h2>`);
     }else {
         console.log('todo');

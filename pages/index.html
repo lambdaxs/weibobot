@@ -26,43 +26,37 @@
 <form class="form">
     <div class="form-item" style="text-align: center" >
         <label>城市名称</label>
-        <div class="append w50" style="margin:0 auto;">
-            <input type="text" name="search" placeholder="输入城市" id="city">
-            <button class="button outline" onclick="return go();">授权</button>
-            <button class="button outline" id="remove-btn">取消授权</button>
-        </div>
+        <input type="text" name="search" placeholder="输入城市" id="city">            
+    </div>
+    <div class="form-item" style="text-align: center">
+        <button class="button outline" onclick="return go();">添加机器人</button>            
+        <button class="button secondary upper outline" onclick="return remove();">销毁机器人</button> 
     </div>
 </form>
 
-<div style="text-align: center">
+<div class="row auto">
+    <div class="col" style="text-align: center"></div>
+</div>
+
+<div style="text-align: center">    
     <samp>每天早上8点发送一条当前城市的天气微博</samp>
-<samp>by猫为什么不能遛</samp>
+    <samp>by猫为什么不能遛</samp>   
 </div>
 
 <script>
     function go() {
         var city_name = document.getElementById('city').value;
-	window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=529280005&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state='+encodeURI(encodeURI(city_name));    
-	return false;
-    }
-
-    //读取cookie
-    function getCookie(name){
-        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-        if(arr=document.cookie.match(reg)){
-            return unescape(arr[2]);
+        if (city_name){
+            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=529280005&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state='+encodeURI(encodeURI(city_name));    
         }else {
-            return null;
-        }        
+            alert('请输入城市名称');
+        }
+	    return false;
     }
 
-    var uid = getCookie('uid');
-    if (uid){//uid存在 可以直接取消授权
-        $('#remove-btn').show();
-        console.log(uid);
-    }else {//先登录 再取消授权
-        $('#remove-btn').hide();
-        console.log('需要登录');
+    function remove(){
+        window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=529280005&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state=';    
+        return false;
     }
 
 </script>
