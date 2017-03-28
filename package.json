@@ -13,10 +13,12 @@
     "crypto": "^0.0.3",
     "express": "^4.15.2",
     "express-basic-auth": "^1.0.0",
+    "mongodb": "^2.2.25",
     "optimist": "^0.6.1",
     "querystring": "^0.2.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
+    "sinalogin": "0.0.3",
     "tough-cookie-filestore": "^0.0.1"
   }
 }

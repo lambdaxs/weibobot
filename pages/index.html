@@ -16,7 +16,7 @@
 
 <div class="row auto">
     <div class="col"></div>
-    <div class="col" style="text-align: center"><var class="large">微博天气机器人</var></div>
+    <div class="col" style="text-align: center" onclick="return home();"><var class="large">微博天气机器人</var></div>
     <div class="col"></div>
 </div>
 
@@ -55,7 +55,7 @@
     function go() {
         var city_name = document.getElementById('city').value;
         if (city_name){
-            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=529280005&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state='+encodeURI(encodeURI(city_name));    
+            window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=3514834923&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state='+encodeURI(encodeURI(city_name));
         }else {
             alert('请输入城市名称');
         }
@@ -63,12 +63,13 @@
     }
 
     function remove(){
-        window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=529280005&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state=';    
+        window.location.href = 'https://api.weibo.com/oauth2/authorize?client_id=3514834923&redirect_uri=http://123.206.15.206:3000/oauth/weibo&state=';
         return false;
     }
 
     function home(){
         window.location.href = 'http://weather.xsdota.com';
+        return false;
     }
 
 </script>
@@ -77,7 +78,7 @@
 <script>
     document.addEventListener('touchmove', function (e) {
         e.preventDefault()
-    })
+    });
     var c = document.getElementsByTagName('canvas')[0],
         x = c.getContext('2d'),
         pr = window.devicePixelRatio || 1,
