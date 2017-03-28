@@ -40,5 +40,5 @@ const http_post = (url,data)=>{
     });
     const log = await Promise.all(tasks);
     console.log(new Date().toLocaleString());
-    console.log(log);
+    console.log(log.map(l=>{return l.text;}));
 })();

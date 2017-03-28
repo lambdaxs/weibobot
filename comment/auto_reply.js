@@ -2,12 +2,12 @@ let request = require('request');
 const {mine} = require('../config.json');
 const xb = require('./xiaobing');
 const fs = require('fs');
-const reply_ids = require('./reply_ids.json');
+let reply_ids = require('./reply_ids.json');
 
 //获取我收到的评论列表
 const get_comments = (token)=>{
     return new Promise((s,f)=>{
-        request.get(`https://api.weibo.com/2/comments/to_me.json?access_token=${token}&count=1`,(err,res,body)=>{
+        request.get(`https://api.weibo.com/2/comments/to_me.json?access_token=${token}&count=10`,(err,res,body)=>{
             if (!err && res.statusCode == 200){            
                 s(JSON.parse(body));
             }else {
@@ -39,7 +39,8 @@ const reply_comment = (data)=>{
         const datas = await get_comments(token);
         //评论id
         const comment_id = datas.comments[0].id;
-        if (reply_ids.indexOf(comment_id) !== -1){//已存在
+       console.log(comment_id)
+	   	if (reply_ids.indexOf(comment_id) !== -1){//已存在
             console.log(new Date().toLocaleString());
             console.log('没有新的评论');
             return;
@@ -47,7 +48,7 @@ const reply_comment = (data)=>{
         //微博id
         const status_id = datas.comments[0].status.id;
         //评论内容
-        const comment = datas.comments[0].reply_original_text
+        const comment = datas.comments[0].reply_original_text || datas.comments[0].text;
         //回复
         const reply = await xb.send_msg(comment);
         //发布回复
@@ -59,13 +60,14 @@ const reply_comment = (data)=>{
         })
         //将评论id 存入已回复列表
         reply_ids.push(comment_id);
-        fs.writeFileSync('./reply_ids.json',JSON.stringify(reply_ids));
-
-        //输出日志
-        const user_name = datas.comments[0].user.name;
-        console.log(new Date().toLocaleString());
-        console.log(`${user_name}:${comment}====>${reply}`);
+        fs.writeFile('./reply_ids.json',JSON.stringify(reply_ids),(err)=>{
+		 //输出日志
+		 const user_name = datas.comments[0].user.name;
+		 console.log(new Date().toLocaleString());
+		 console.log(`${user_name}:${comment}====>${reply}`);
+		});
     } catch (error) {
+		console.log('error');
         console.log(error);
     }
 })();

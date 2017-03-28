@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:wb="http://open.weibo.com/wb">
 <head>
     <meta charset="UTF-8">
     <title>weather-bot</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+   	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <link href="http://cdn.bootcss.com/kube/6.5.2/css/kube.css" rel="stylesheet">
     <script src="http://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 
@@ -35,12 +36,19 @@
 </form>
 
 <div class="row auto">
-    <div class="col" style="text-align: center"></div>
+    <div class="col" style="text-align: center">
+	</div>
 </div>
 
 <div style="text-align: center">    
     <samp>每天早上8点发送一条当前城市的天气微博</samp>
     <samp>by猫为什么不能遛</samp>   
+</div>
+
+<div class="raw auto">
+	<div class="col" style="text-align:center">
+		<wb:share-button appkey="3514834923" addition="simple" type="button" ralateUid="3002082365"></wb:share-button>
+	</div>
 </div>
 
 <script>

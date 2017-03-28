@@ -1,9 +1,9 @@
 var request = require('request');
 const common = require('./common');
 
-var FileCookieStore = require('tough-cookie-filestore');
-var j = request.jar(new FileCookieStore(__dirname+'/cookies.json'));
-request = request.defaults({ jar :j})
+//var FileCookieStore = require('tough-cookie-filestore');
+//var j = request.jar(new FileCookieStore(__dirname+'/cookies.json'));
+//request = request.defaults({ jar :j})
 
 const rec_options = {
     url: 'http://m.weibo.cn/msg/messages?uid=5175429989&page=1',
@@ -43,7 +43,7 @@ const send_options = (content)=>{
         form:{
             field:null,
             content,
-            st:'07fdff',
+            st:common.st,
             uid:'5175429989'
         }
     }
@@ -58,14 +58,16 @@ const get_new_msg = (question)=>{
             }else {
                 return s(text);
             }
-        })
+        },err=>{
+			throw err;
+		})
     })
 };
 
 const send_msg = (question)=>{
     return new Promise((s,f)=>{
         request(send_options(question),(err,res,body)=>{
-            if (!err && res.statusCode == 200){
+			if (!err && res.statusCode == 200){
                 const {ok} = JSON.parse(body);
                 if (ok==1){//发送成功
                     s(get_new_msg(question));
