@@ -3,6 +3,7 @@ const {mine} = require('../config.json');
 const xb = require('./xiaobing');
 const fs = require('fs');
 let reply_ids = require('./reply_ids.json');
+const auto_login = require('./auto_login');
 
 //获取我收到的评论列表
 const get_comments = (token)=>{
@@ -13,9 +14,9 @@ const get_comments = (token)=>{
             }else {
                 f(err);
             }
-        })
+        });
     });
-}
+};
 
 //回复评论
 const reply_comment = (data)=>{
@@ -31,7 +32,7 @@ const reply_comment = (data)=>{
             }
         });
     })
-}
+};
 
 (async()=>{
     try {
@@ -39,7 +40,7 @@ const reply_comment = (data)=>{
         const datas = await get_comments(token);
         //评论id
         const comment_id = datas.comments[0].id;
-       console.log(comment_id)
+       console.log(comment_id);
 	   	if (reply_ids.indexOf(comment_id) !== -1){//已存在
             console.log(new Date().toLocaleString());
             console.log('没有新的评论');
@@ -57,7 +58,7 @@ const reply_comment = (data)=>{
             comment:reply,
             cid:comment_id,
             id:status_id
-        })
+        });
         //将评论id 存入已回复列表
         reply_ids.push(comment_id);
         fs.writeFile('./reply_ids.json',JSON.stringify(reply_ids),(err)=>{
@@ -69,5 +70,9 @@ const reply_comment = (data)=>{
     } catch (error) {
 		console.log('error');
         console.log(error);
+        //cookie过期 获取新的cookie
+        const sub = await auto_login.get_sub();
+        //写入sub.json文件
+        fs.writeFileSync('./sub.json',sub);
     }
 })();

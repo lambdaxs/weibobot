@@ -10,4 +10,4 @@ const xb = require('./xiaobing');
         console.log('err');
         console.log(err);
     }
-})()
+})();
