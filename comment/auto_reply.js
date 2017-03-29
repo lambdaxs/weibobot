@@ -4,6 +4,17 @@ const xb = require('./xiaobing');
 const fs = require('fs');
 let reply_ids = require('./reply_ids.json');
 const auto_login = require('./auto_login');
+const client = require('./DB');
+
+const collection = async (name)=>{
+    try{
+        const db = await client.get_client();
+        return db.collection(name)
+    }catch (err){
+        logger.error(`获取集合失败`);
+        return Promise.reject(err)
+    }
+};
 
 //获取我收到的评论列表
 const get_comments = (token)=>{
@@ -40,12 +51,21 @@ const reply_comment = (data)=>{
         const datas = await get_comments(token);
         //评论id
         const comment_id = datas.comments[0].id;
-       console.log(comment_id);
-	   	if (reply_ids.indexOf(comment_id) !== -1){//已存在
+
+
+        const reply_ids = await collection('reply_ids');
+
+        //判断评论是否已存在
+        let comment_exists = await reply_ids.findOne({comment_id});
+        if(comment_exists){
+            console.log(comment_id);
             console.log(new Date().toLocaleString());
             console.log('没有新的评论');
             return;
         }
+
+        //用户名
+        const user_name = datas.comments[0].user.name;
         //微博id
         const status_id = datas.comments[0].status.id;
         //评论内容
@@ -59,14 +79,21 @@ const reply_comment = (data)=>{
             cid:comment_id,
             id:status_id
         });
-        //将评论id 存入已回复列表
-        reply_ids.push(comment_id);
-        fs.writeFile('./reply_ids.json',JSON.stringify(reply_ids),(err)=>{
-		 //输出日志
-		 const user_name = datas.comments[0].user.name;
-		 console.log(new Date().toLocaleString());
-		 console.log(`${user_name}:${comment}====>${reply}`);
-		});
+
+
+
+        //将评论存入数据库
+        await reply_ids.insertOne({
+            comment_id,
+            user_name,
+            comment,
+            reply
+        });
+
+        //输出日志
+        console.log(new Date().toLocaleString());
+        console.log(`${user_name}:${comment}====>${reply}`);
+
     } catch (error) {
 		console.log('error');
         console.log(error);

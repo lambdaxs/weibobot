@@ -4,6 +4,17 @@ const fs = require('fs');
 const query_url = require('url');
 const request = require('request');
 const const_data = require('./config.json').const_data;
+const client = require('./comment/DB');
+
+const collection = async (name)=>{
+    try{
+        const db = await client.get_client();
+        return db.collection(name)
+    }catch (err){
+        logger.error(`获取集合失败`);
+        return Promise.reject(err)
+    }
+};
 
 const http_post = (url,data)=>{
     return new Promise((s,f)=>{
@@ -25,7 +36,7 @@ http.createServer(async (req,res)=>{
         const {code,state} = query_url.parse(url,true).query;
 
         if(!code){
-            console.log('回调地址中没有code')
+            console.log('回调地址中没有code');
             return res.end(`<h2>授权失败！</h2>`);
         }
 
@@ -37,6 +48,8 @@ http.createServer(async (req,res)=>{
             code,
         };
 
+        const tokens = await collection('weibo_token');
+
 
         //微博授权
         const {uid,access_token} = await http_post(const_data.get_token,post_data);
@@ -45,11 +58,8 @@ http.createServer(async (req,res)=>{
         }
 
         if (!state){//取消授权
-            const tokens = require('./token.json');
-            const rs = tokens.filter(data=>{
-                return data.uid != uid;
-            });
-            fs.writeFileSync(const_data.token_path,JSON.stringify(rs));
+            //删除uid
+            await tokens.findOneAndDelete({uid});
             const data = fs.readFileSync('./pages/remove.html');
             res.writeHead(200,{
                 'Content-Type':'text/html;charset=utf-8;'
@@ -59,20 +69,13 @@ http.createServer(async (req,res)=>{
 
         //过滤城市信息
 
-        if (fs.existsSync(const_data.token_path)){
-            const token_datas = require('./token.json');
-                let exist_index = 0;
-            if (token_datas.some((obj,index)=>{exist_index=index; return obj.uid===uid;})){
-                token_datas[exist_index] = {uid,access_token,city:state};
-            }else {
-                 token_datas.push({
-                        uid,access_token,city:state
-                 });
-            }
-            fs.writeFileSync(const_data.token_path,JSON.stringify(token_datas));
-        }else {
-            fs.writeFileSync(const_data.token_path,JSON.stringify([{uid,access_token,city:state}]));
-        }
+        //增加token
+        await tokens.insertOne({
+            uid,
+            access_token,
+            city:state
+        });
+
         const data = fs.readFileSync('./pages/success.html');
         res.writeHead(200,{
             'Content-Type':'text/html;charset=utf-8;'
