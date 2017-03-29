@@ -67,7 +67,6 @@ http.createServer(async (req,res)=>{
         }
 
         //过滤城市信息
-
         //增加token
         await tokens.insertOne({
             uid,
@@ -87,7 +86,8 @@ http.createServer(async (req,res)=>{
         });
         return res.end(data.toString());
     }else {
-        console.log('todo');
+        console.log(new Date().toLocaleString());
+        console.log('else');
         res.writeHead(404);
         return res.end(`not funod`);
     }
