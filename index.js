@@ -33,7 +33,7 @@ const http_post = (url,data)=>{
     try{
         const tokens = await collection('weibo_token');
 
-        const token_list = await tokens.find();
+        const token_list = await tokens.find().toArray();
         const weather_task = token_list.map(data=>{
             return api.getWeatherNow(data.city);
         });
@@ -59,5 +59,5 @@ const http_post = (url,data)=>{
         console.log('error');
         console.log(err);
     }
-
+    client.close();
 })();

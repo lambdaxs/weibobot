@@ -16,5 +16,10 @@ async function get_client() {
     }
 }
 
+const close = ()=>{
+    client.close();
+};
+
 module.exports.get_client = get_client;
+module.exports.close = close;
 
