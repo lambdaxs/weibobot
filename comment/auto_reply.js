@@ -11,7 +11,6 @@ const collection = async (name)=>{
         const db = await client.get_client();
         return db.collection(name)
     }catch (err){
-        logger.error(`获取集合失败`);
         return Promise.reject(err)
     }
 };
